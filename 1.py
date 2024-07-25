@@ -1,6 +1,8 @@
 import cv2
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
+from scipy.signal import convolve2d
 import os
 
 
@@ -83,4 +85,66 @@ plt.title("Histogram of Original Image")
 plt.subplot(122)
 plt.plot(hist_convolved)
 plt.title("Histogram of Convolved Image")
+plt.show()
+
+
+# Q.2) a)
+
+import numpy as np
+import matplotlib.pyplot as plt
+def zone_plate(rows, columns, f):
+    x, y = np.meshgrid(np.linspace(-1, 1, columns), np.linspace(-1, 1, rows))
+    zone_plate = 0.5 + 0.5 * np.cos(np.pi * f * (x**2 + y**2))
+    return zone_plate
+def display_image(image, title):
+    fig, ax = plt.subplots()
+    ax.imshow(image, cmap='gray')
+    ax.set_title(title)
+    ax.axis('off')
+    plt.show()
+rows = int(input("Enter the number of rows: "))
+columns = int(input("Enter the number of columns: "))
+f = float(input("Enter the value of 'f': "))
+output = zone_plate(rows, columns, f)
+title = f"Zone Plate Image with f = {int(f)}"
+display_image(output, title)
+
+
+# Q.2) b)
+
+plt.rcParams['animation.ffmpeg_path'] = '' #Put the path where ffmpeg is downloaded
+NROWS, NCOLS=240, 320
+def zone_plate(f, Nx, Ny):
+    x, y = np.meshgrid(np.linspace(-1, 1, Nx), np.linspace(-1, 1, Ny))
+    zone_plate = 0.5 + 0.5 * np.cos(np.pi * f * (x**2 + y**2))
+    return zone_plate
+fig = plt.figure()
+f = 1
+def animate(i):
+    image = zone_plate(f+1.0*i, NCOLS, NROWS)
+    plt.imshow(image, cmap='gray')
+ani = animation.FuncAnimation(fig, animate, frames=50)
+FFwriter = animation.FFMpegWriter(codec='rawvideo')
+ani.save('zoneplate.mov', writer=FFwriter)
+
+# Q.2) c)
+
+plt.rcParams['animation.ffmpeg_path'] = '' #Put the path where ffmpeg is downloaded
+NROWS, NCOLS=240, 320
+def zone_plate(f, Nx, Ny):
+    x, y = np.meshgrid(np.linspace(-1, 1, Nx), np.linspace(-1, 1, Ny))
+    zone_plate = 0.5 + 0.5 * np.sin(np.pi * f * (x**2 + y**2))
+    return zone_plate
+def lpf(image, kernel_size=5):
+    kernel = np.ones((kernel_size, kernel_size)) / (kernel_size**2)
+    return convolve2d(image, kernel, mode='same', boundary='wrap')
+f = 1
+original_frame = zone_plate(f+49.0, NCOLS, NROWS)
+filtered_frame = lpf(original_frame, kernel_size=2)
+plt.subplot(1, 2, 1)
+plt.imshow(original_frame, cmap='gray')
+plt.title('Original Final Frame')
+plt.subplot(1, 2, 2)
+plt.imshow(filtered_frame, cmap='gray')
+plt.title('Filtered Final Frame')
 plt.show()
