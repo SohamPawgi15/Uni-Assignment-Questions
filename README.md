@@ -1,4 +1,4 @@
-For Q.2 assignment questions of Zone Plate Animation
+For Q.2 of 1.py assignment  questions of Zone Plate Animation
 
 ## Requirements
 
